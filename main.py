@@ -23,7 +23,7 @@ def metas(mes, qtd):
     
     for elem in metas:
         if elem[mes] == mes and qtd >= elem[qtd]:
-            return 1
+            return 3
     return 0
 
 
@@ -31,7 +31,7 @@ def metas(mes, qtd):
 def pedidos(pedidos: dict):
 
     bonus = {}
-    qtd = {}
+    qtd = [vendedor][data]
     comissoes = []
     adicional = 0
 
@@ -56,18 +56,24 @@ def pedidos(pedidos: dict):
     #Adiciona a comissao a cada vendedor
         if vendedor in bonus:
             bonus[vendedor] += adicional
-            qtd[vendedor]+=1
+            qtd[vendedor][data]+=1, data
         else:
             bonus[vendedor] = adicional
             qtd[vendedor] = 1
 
+        final = {"vendedor": vendedor, "mes":data, "valor": bonus[vendedor]}
+        comissoes.append(final)
+
     #Calcula comissao adicional de vendas
+    adicional = metas(data, qtd)%total + adicional
+        
+
 
 
 
         
-        final = {"vendedor": vendedor, "mes":data, "valor": bonus[vendedor]}
-        comissoes.append(final)
+        
+        
 
     return {"comissoes": comissoes }
 
