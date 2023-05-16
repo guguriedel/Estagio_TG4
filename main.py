@@ -2,7 +2,7 @@ from typing import List
 from pydantic import BaseModel #Criar o tipo estrutrado
 from fastapi import FastAPI     #Usar o fastAPI
 
-
+#Criação do app, para rodar no servidos
 app = FastAPI()
 
 #Tipo estruturado de uma comissao
@@ -32,7 +32,7 @@ def pedidos(pedidos):
     comissoes = []
     vendedores = []
     #Lista para armazenar os pedidos e não perder a referencia
-    #conforme se avança com o for
+    #conforme se avança com o FOR
 
     #percorrer as metas salvando o mes e a qtd referencia
     for meta in metas:
@@ -45,7 +45,7 @@ def pedidos(pedidos):
 
         for pedido in pedidos:
             data = int(pedido.data.split("-")[1])
-            #Transformo a str da data em um numero referente ao mes
+            #Transformo a str data em um numero referente ao mes
 
             #Comparações para definir a qtd de bonus de acordo com a regra
             if data == mes:
@@ -58,22 +58,16 @@ def pedidos(pedidos):
 
                 tot_bonus += bonus
 
-
-                #
-                if qtd == qtd_ref:
-                    #Lista que registra todos os vendedores ja analisados
-                    if pedido.vendedor not in vendedores:
-                        vendedores.append(pedido.vendedor)
+                #Aqui é comissão por quantidade de vendas
+                #Vejo se o numero de vendas é igual ao meu numero de referencia
+                if qtd != qtd_ref:
                         qtd+=1
-                    #Caso um vendedor ja tenha feito uma venda ele foi add na lista
-                    else:
-                        qtd+=1
-                    #Checa se a qtd de pedidos é equivalente ao minimo para receber o bonus
                 else:
                     #Acrescento o bonus por qtd de vendas
                     tot_bonus += pedido.valor * 0.03
                     #Corto o loop
-                    qtd = -1
+                    qtd +=1 
+                    #Ao adicionar 1 impedimos que o bonus seja somado repetidas vezes
 
 
 #é imp definir o tot_bonus como 0 para evitar que o if
@@ -82,11 +76,14 @@ def pedidos(pedidos):
             #Checo se a comissão é nula
             comissoes.append({"vendedor": pedido.vendedor, "mes": mes, "valor": tot_bonus})
             #Desse modo adiciono apenas comissões não nulas na lista
-
+            #Concatena todas os dicionarios em uma mesma lista
+            
+    #ret a lista
     return comissoes
 
 
-@app.post("/api/calc_comissao")
-def calc_comissao(pedido: list[Comissao]):
-    comissoes = pedidos(pedido)
-    return {"comissoes": comissoes}
+#Agora devemos criar o post no qual o usuario ira entrar com os dados
+@app.post("/api/calc_comissao") #Recebo os dados
+def calc_comissao(pedido: list[Comissao]): #Função que organiza os dados em um dict
+    comissoes = pedidos(pedido) #chamo a função pedidos
+    return {"comissoes": comissoes} #ret no formato pedido
