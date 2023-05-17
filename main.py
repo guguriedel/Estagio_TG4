@@ -2,7 +2,7 @@ from typing import List
 from pydantic import BaseModel #Criar o tipo estrutrado
 from fastapi import FastAPI     #Usar o fastAPI
 
-#Criação do app, para rodar no servidos
+#Criação do app, para rodar no servidor
 app = FastAPI()
 
 #Tipo estruturado de uma comissao
@@ -57,6 +57,7 @@ def pedidos(pedidos):
                     bonus = (pedido.valor) * 0.03
 
                 tot_bonus += bonus
+                
 
                 #Aqui é comissão por quantidade de vendas
                 #Vejo se o numero de vendas é igual ao meu numero de referencia
@@ -72,18 +73,25 @@ def pedidos(pedidos):
 
 #é imp definir o tot_bonus como 0 para evitar que o if
 #seja feito com uma variavel não iniciada
+#isso aconteceria caso usassemos o bonus, uma vez que ele so foi inicializado dentro das condicionais
         if tot_bonus:
             #Checo se a comissão é nula
             comissoes.append({"vendedor": pedido.vendedor, "mes": mes, "valor": tot_bonus})
             #Desse modo adiciono apenas comissões não nulas na lista
-            #Concatena todas os dicionarios em uma mesma lista
+            #Concatena todos os dicionarios em uma mesma lista
             
     #ret a lista
     return comissoes
 
 
 #Agora devemos criar o post no qual o usuario ira entrar com os dados
-@app.post("/api/calc_comissao") #Recebo os dados
-def calc_comissao(pedido: list[Comissao]): #Função que organiza os dados em um dict
+@app.post("/api/calc_comissao") 
+def calc_comissao(pedido: list[Comissao]): #Recebo os dados no formato de um dicionario
     comissoes = pedidos(pedido) #chamo a função pedidos
     return {"comissoes": comissoes} #ret no formato pedido
+
+
+
+#A função pedidos poderia ser feito dentro do post, acredito que desse modo o codigo fique menos confuso
+#Não conhecia a FastAPI, por isso, também, achei mlr primeiro criar o algoritmo e depois tentar entender de que a maneira a API iria
+#fornecer e receber os dados.
